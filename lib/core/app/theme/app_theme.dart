@@ -39,4 +39,21 @@ class AppTheme {
 
   static final TextStyle _darkScreenDisplayLargeTextStyle =
       _lightScreenDisplayLargeTextStyle.copyWith(color: _darkBackgroundColor);
+
+  static const LinearGradient lightBackgroundGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: <Color>[
+      Color.fromARGB(255, 32, 37, 34),
+      Color.fromARGB(255, 32, 37, 34),
+      Color.fromARGB(255, 36, 44, 39),
+      Color.fromARGB(255, 24, 34, 36),
+      Color.fromARGB(255, 44, 37, 28),
+      Color.fromARGB(255, 44, 66, 51),
+      Color.fromARGB(255, 40, 48, 43),
+      Color.fromARGB(255, 47, 59, 52),
+      Color.fromARGB(255, 54, 71, 59),
+      Color.fromARGB(255, 53, 77, 61),
+    ],
+  );
 }
