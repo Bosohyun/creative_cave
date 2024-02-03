@@ -6,7 +6,7 @@ sealed class DashboardState extends Equatable {
   final int tabIndex;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [tabIndex];
 }
 
 final class DashboardInitial extends DashboardState {
