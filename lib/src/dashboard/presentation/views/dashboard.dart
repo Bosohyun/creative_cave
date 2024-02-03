@@ -10,7 +10,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
-  static const routeName = '/';
+  static const routeName = '/dashboard';
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -46,7 +46,7 @@ class _DashboardState extends State<Dashboard> {
           body: _mainWrapperBody(),
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20), topRight: Radius.circular(20)),
               color: context.theme.colorScheme.primary,
               boxShadow: [
@@ -64,7 +64,7 @@ class _DashboardState extends State<Dashboard> {
                 activeColor: context.theme.colorScheme.background,
                 haptic: true,
                 gap: 8,
-                tabs: [
+                tabs: const [
                   GButton(
                     icon: Icons.home,
                     text: 'Home',
@@ -74,16 +74,16 @@ class _DashboardState extends State<Dashboard> {
                     text: 'Chat',
                   ),
                   GButton(
+                    icon: Icons.person,
+                    text: 'Profile',
+                  ),
+                  GButton(
                     icon: Icons.settings,
                     text: 'Settings',
                   ),
                 ],
                 selectedIndex: state.tabIndex,
-                onTabChange: (index) => pageController.animateToPage(
-                      index,
-                      duration: const Duration(milliseconds: 100),
-                      curve: Curves.easeInOut,
-                    )),
+                onTabChange: (index) => _onTabChange(index)),
           ),
         );
       },
@@ -100,9 +100,15 @@ class _DashboardState extends State<Dashboard> {
         context.read<DashboardBloc>().add(
               TabChange(index),
             );
-
-        print(index);
       },
+    );
+  }
+
+  void _onTabChange(int index) {
+    pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.easeInOut,
     );
   }
 }
