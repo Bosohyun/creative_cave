@@ -2,20 +2,18 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:creative_cave/core/common/app/theme/app_theme.dart';
 import 'package:creative_cave/core/extensions/context_extension.dart';
 import 'package:creative_cave/core/res/media_res.dart';
-import 'package:creative_cave/src/auth/presentation/views/sign_up_view.dart';
-import 'package:creative_cave/src/auth/presentation/widgets/sign_in_form.dart';
 import 'package:flutter/material.dart';
 
-class SignInView extends StatefulWidget {
-  const SignInView({super.key});
+class SignUpView extends StatefulWidget {
+  const SignUpView({super.key});
 
-  static const routeName = '/sign-in';
+  static const routeName = '/sign-up';
 
   @override
-  State<SignInView> createState() => _SignInViewState();
+  State<SignUpView> createState() => _SignUpViewState();
 }
 
-class _SignInViewState extends State<SignInView> {
+class _SignUpViewState extends State<SignUpView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,10 +44,7 @@ class _SignInViewState extends State<SignInView> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(
-                        context, SignUpView.routeName);
-                  },
+                  onPressed: () {},
                   child: Text(
                     'Register account?',
                     style: TextStyle(
@@ -59,7 +54,6 @@ class _SignInViewState extends State<SignInView> {
                 ),
               ),
             ),
-            const SignInForm(),
             Padding(
               padding: EdgeInsets.only(
                 right: context.width * 0.08,

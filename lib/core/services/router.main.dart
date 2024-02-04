@@ -14,6 +14,22 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/settings':
       return _pageBuilder((_) => const SettingsView(), settings: settings);
 
+    case SignInView.routeName:
+      return _pageBuilder(
+          (_) => BlocProvider(
+                create: (_) => sl<AuthBloc>(),
+                child: const SignInView(),
+              ),
+          settings: settings);
+
+    case SignUpView.routeName:
+      return _pageBuilder(
+          (_) => BlocProvider(
+                create: (context) => sl<AuthBloc>(),
+                child: const SignUpView(),
+              ),
+          settings: settings);
+
     default:
       return _errorRoute();
   }
