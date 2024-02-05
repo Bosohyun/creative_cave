@@ -2,6 +2,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:creative_cave/core/common/app/theme/app_theme.dart';
 import 'package:creative_cave/core/extensions/context_extension.dart';
 import 'package:creative_cave/core/res/media_res.dart';
+import 'package:creative_cave/src/auth/presentation/views/sign_in_view.dart';
+import 'package:creative_cave/src/auth/presentation/widgets/sign_up_form.dart';
 import 'package:flutter/material.dart';
 
 class SignUpView extends StatefulWidget {
@@ -14,18 +16,33 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignUpViewState extends State<SignUpView> {
+  final emailController = TextEditingController();
+  final fullNameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    fullNameController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Color(0xFF324037).withAlpha(100),
       body: Container(
         decoration:
-            const BoxDecoration(gradient: AppTheme.lightBackgroundGradient),
+            const BoxDecoration(gradient: AppTheme.signUpBackgroundGradient),
         child: ListView(
           children: [
             SizedBox(height: context.height * 0.03),
             Container(
-              height: context.height * 0.3,
+              height: context.height * 0.15,
               clipBehavior: Clip.antiAlias,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
@@ -44,9 +61,12 @@ class _SignUpViewState extends State<SignUpView> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(
+                        context, SignInView.routeName);
+                  },
                   child: Text(
-                    'Register account?',
+                    'Already have an account?',
                     style: TextStyle(
                       color: context.theme.colorScheme.secondary,
                     ),
@@ -54,6 +74,12 @@ class _SignUpViewState extends State<SignUpView> {
                 ),
               ),
             ),
+            SignUpForm(
+                emailController: emailController,
+                fullNameController: fullNameController,
+                passwordController: passwordController,
+                confirmPasswordController: confirmPasswordController,
+                formKey: formKey),
             Padding(
               padding: EdgeInsets.only(
                 right: context.width * 0.08,
@@ -86,7 +112,7 @@ class _SignUpViewState extends State<SignUpView> {
                     elevation: 10),
                 onPressed: () {},
                 child: const AutoSizeText(
-                  'Sign In',
+                  'Sign Up',
                   style: TextStyle(
                       fontSize: 20,
                       fontFamily: 'Roboto',

@@ -6,6 +6,7 @@ import 'package:creative_cave/core/enums/update_user.dart';
 import 'package:creative_cave/src/auth/domain/entities/user.dart';
 import 'package:creative_cave/src/auth/domain/usecases/forgot_password.dart';
 import 'package:creative_cave/src/auth/domain/usecases/sign_in.dart';
+import 'package:creative_cave/src/auth/domain/usecases/sign_in_google.dart';
 import 'package:creative_cave/src/auth/domain/usecases/sign_up.dart';
 import 'package:creative_cave/src/auth/domain/usecases/update_user.dart';
 
@@ -18,10 +19,12 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({
     required SignIn signIn,
+    required SignInGoogle signInWithGoogle,
     required SignUp signUp,
     required ForgotPassword forgotPassword,
     required UpdateUser updateUser,
   })  : _signIn = signIn,
+        _signInWithGoogle = signInWithGoogle,
         _signUp = signUp,
         _forgotPassword = forgotPassword,
         _updateUser = updateUser,
@@ -30,6 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthLoading());
     });
     on<SignInEvent>(_signInHandler);
+    on<SignInWithGoogleEvent>(_signInWithGoogleHandler);
     on<SignUpEvent>(_signUpHandler);
     on<ForgotPasswordEvent>(_forgotPasswordHandler);
     on<UpdateUserEvent>(_updateUserHandler);
@@ -38,6 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignIn _signIn;
   final SignUp _signUp;
   final ForgotPassword _forgotPassword;
+  final SignInGoogle _signInWithGoogle;
   final UpdateUser _updateUser;
 
   Future<void> _signInHandler(
@@ -50,6 +55,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         password: event.password,
       ),
     );
+    result.fold(
+      (failure) => emit(AuthError(failure.errorMessage)),
+      (user) => emit(SignedIn(user)),
+    );
+  }
+
+  Future<void> _signInWithGoogleHandler(
+    SignInWithGoogleEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    final result = await _signInWithGoogle();
     result.fold(
       (failure) => emit(AuthError(failure.errorMessage)),
       (user) => emit(SignedIn(user)),
@@ -69,7 +85,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     result.fold(
       (failure) => emit(AuthError(failure.errorMessage)),
-      (_) => emit(const SignedUp()),
+      (_) => emit(const EmailVerificationSent()),
     );
   }
 

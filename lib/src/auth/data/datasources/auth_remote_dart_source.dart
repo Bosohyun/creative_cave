@@ -10,6 +10,7 @@ import 'package:creative_cave/src/auth/data/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 abstract class AuthRemoteDataSource {
   const AuthRemoteDataSource();
@@ -27,6 +28,8 @@ abstract class AuthRemoteDataSource {
     required String password,
   });
 
+  Future<LocalUserModel> signInWithGoogle();
+
   Future<void> updateUser({
     required UpdateUserAction action,
     dynamic userData,
@@ -38,13 +41,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required FirebaseAuth authClient,
     required FirebaseFirestore cloudStoreClient,
     required FirebaseStorage dbClient,
+    required GoogleSignIn googleSignIn,
   })  : _authClient = authClient,
         _cloudStoreClient = cloudStoreClient,
-        _dbClient = dbClient;
+        _dbClient = dbClient,
+        _googleSignIn = googleSignIn;
 
   final FirebaseAuth _authClient;
   final FirebaseFirestore _cloudStoreClient;
   final FirebaseStorage _dbClient;
+  final GoogleSignIn _googleSignIn;
 
   @override
   Future<void> forgotPassword(String email) async {
@@ -111,6 +117,65 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<LocalUserModel> signInWithGoogle() async {
+    final GoogleSignInAccount? googleSignInAccount =
+        await _googleSignIn.signIn();
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      try {
+        final UserCredential userCredential =
+            await _authClient.signInWithCredential(credential);
+
+        final user = userCredential.user;
+
+        if (user == null) {
+          throw const ServerException(
+            message: 'Please try again later',
+            statusCode: 'Unknown Error',
+          );
+        }
+
+        var userData = await _getUserData(user.uid);
+
+        if (userData.exists) {
+          return LocalUserModel.fromMap(userData.data()!);
+        }
+
+        await _setUserData(user, googleSignInAccount.email);
+
+        userData = await _getUserData(user.uid);
+
+        return LocalUserModel.fromMap(userData.data()!);
+      } on FirebaseAuthException catch (e) {
+        throw ServerException(
+          message: e.message ?? 'Error Occurred',
+          statusCode: e.code,
+        );
+      } on ServerException {
+        rethrow;
+      } catch (e, s) {
+        debugPrintStack(stackTrace: s);
+        throw ServerException(
+          message: e.toString(),
+          statusCode: '505',
+        );
+      }
+    } else {
+      throw const ServerException(
+        message: 'Google Sign In Failed',
+        statusCode: '401',
+      );
+    }
+  }
+
+  @override
   Future<void> signUp({
     required String email,
     required String fullName,
@@ -124,7 +189,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       await userCred.user?.updateDisplayName(fullName);
       await userCred.user?.updatePhotoURL(kDefaultAvatar);
-      await _setUserData(_authClient.currentUser!, email);
+      await userCred.user?.sendEmailVerification();
     } on FirebaseAuthException catch (e) {
       throw ServerException(
         message: e.message ?? 'Error Occurred',
