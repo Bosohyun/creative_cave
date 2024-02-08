@@ -50,6 +50,11 @@ dependencies:
   cloud_firestore: ^4.15.3
   get_it: ^7.6.7
   google_sign_in: ^6.2.1
+  uuid: ^4.3.3
+  firebase_ui_auth: ^1.12.1
+  responsive_sizer: ^3.3.0+1
+  shared_preferences: ^2.2.2
+  provider: ^6.1.1
 
 
 

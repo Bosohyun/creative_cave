@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "182122117962",
+    "project_id": "creativecave-2ed26",
+    "storage_bucket": "creativecave-2ed26.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:182122117962:android:f6f211811b1af8b9e91fb3",
+        "android_client_info": {
+          "package_name": "com.bosohyun.creative_cave"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "182122117962-f086v8qqqur4hs0gfcjjng12odo61806.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdvXx67J5Dt0zVdTZ7FSuYafJOM3oVkAI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "182122117962-f086v8qqqur4hs0gfcjjng12odo61806.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

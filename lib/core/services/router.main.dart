@@ -3,13 +3,34 @@ part of 'router.dart';
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case '/':
-      return _pageBuilder((_) => const SignInView(), settings: settings);
-    // return _pageBuilder(
-    //     (_) => BlocProvider(
-    //           create: (_) => DashboardBloc(),
-    //           child: const Dashboard(),
-    //         ),
-    //     settings: settings);
+      final prefs = sl<SharedPreferences>();
+      return _pageBuilder((context) {
+        if (prefs.getBool(kFirstTimerKey) ?? true) {
+          return BlocProvider(
+              create: (_) => sl<OnBoardingCubit>(),
+              child: const OnBoardingView());
+        } else if (sl<FirebaseAuth>().currentUser != null) {
+          final user = sl<FirebaseAuth>().currentUser!;
+          final localUser = LocalUserModel(
+            uid: user.uid,
+            email: user.email ?? '',
+            points: 0,
+            fullName: user.displayName ?? '',
+          );
+          context.usesProvider.initUser(localUser);
+          return const Dashboard();
+        }
+        return BlocProvider(
+          create: (_) => sl<AuthBloc>(),
+          child: const SignInView(),
+        );
+      }, settings: settings);
+
+    case '/forgot-password':
+      return _pageBuilder(
+        (_) => const fui.ForgotPasswordScreen(),
+        settings: settings,
+      );
 
     case '/settings':
       return _pageBuilder((_) => const SettingsView(), settings: settings);
