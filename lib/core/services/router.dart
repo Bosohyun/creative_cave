@@ -5,6 +5,7 @@ import 'package:creative_cave/src/auth/data/models/user_model.dart';
 import 'package:creative_cave/src/auth/presentation/bloc/auth_bloc.dart';
 import 'package:creative_cave/src/auth/presentation/views/sign_in_view.dart';
 import 'package:creative_cave/src/auth/presentation/views/sign_up_view.dart';
+import 'package:creative_cave/src/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:creative_cave/src/dashboard/presentation/views/dashboard.dart';
 import 'package:creative_cave/src/on_boarding/data/datasources/on_boarding_local_data_source.dart';
 import 'package:creative_cave/src/on_boarding/presentation/cubit/on_boarding_cubit.dart';

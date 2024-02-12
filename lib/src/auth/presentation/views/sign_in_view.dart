@@ -1,11 +1,15 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:creative_cave/core/common/app/providers/user_provider.dart';
 import 'package:creative_cave/core/common/app/theme/app_theme.dart';
 import 'package:creative_cave/core/extensions/context_extension.dart';
 import 'package:creative_cave/core/res/media_res.dart';
 import 'package:creative_cave/core/utils/core_utils.dart';
+import 'package:creative_cave/src/auth/data/models/user_model.dart';
 import 'package:creative_cave/src/auth/presentation/bloc/auth_bloc.dart';
 import 'package:creative_cave/src/auth/presentation/views/sign_up_view.dart';
 import 'package:creative_cave/src/auth/presentation/widgets/sign_in_form.dart';
+import 'package:creative_cave/src/dashboard/presentation/views/dashboard.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -39,7 +43,12 @@ class _SignInViewState extends State<SignInView> {
           if (state is AuthError) {
             CoreUtils.showSnackBar(context, state.message);
           } else if (state is SignedIn) {
-            if (mounted) {}
+            if (mounted) {
+              context
+                  .read<UserProvider>()
+                  .initUser(state.user as LocalUserModel);
+              Navigator.pushReplacementNamed(context, Dashboard.routeName);
+            }
           }
         },
         builder: (context, state) {
@@ -94,7 +103,9 @@ class _SignInViewState extends State<SignInView> {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/forgot-password');
+                      },
                       child: Text(
                         'Forgot Password?',
                         style: TextStyle(
@@ -117,7 +128,18 @@ class _SignInViewState extends State<SignInView> {
                           45,
                         ),
                         elevation: 10),
-                    onPressed: () {},
+                    onPressed: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      FirebaseAuth.instance.currentUser?.reload();
+                      if (formKey.currentState!.validate()) {
+                        context.read<AuthBloc>().add(
+                              SignInEvent(
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim(),
+                              ),
+                            );
+                      }
+                    },
                     child: const AutoSizeText(
                       'Sign In',
                       style: TextStyle(
@@ -132,7 +154,11 @@ class _SignInViewState extends State<SignInView> {
                   height: context.height * 0.05,
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    context.read<AuthBloc>().add(
+                          SignInWithGoogleEvent(),
+                        );
+                  },
                   child: SizedBox(
                     width: 40,
                     height: 40,

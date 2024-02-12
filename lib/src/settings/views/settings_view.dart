@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SettingsView extends StatefulWidget {
@@ -14,10 +17,20 @@ class _SettingsViewState extends State<SettingsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(
-          'Settings Screen',
-        ),
-      ),
+          child: ElevatedButton(
+              child: Text("Logout"),
+              onPressed: () async {
+                final navigator = Navigator.of(context);
+
+                await FirebaseAuth.instance.signOut();
+
+                unawaited(
+                  navigator.pushNamedAndRemoveUntil(
+                    '/',
+                    (route) => false,
+                  ),
+                );
+              })),
     );
   }
 }

@@ -18,7 +18,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
             fullName: user.displayName ?? '',
           );
           context.usesProvider.initUser(localUser);
-          return const Dashboard();
+          return BlocProvider(
+            create: (_) => sl<DashboardBloc>(),
+            child: const Dashboard(),
+          );
         }
         return BlocProvider(
           create: (_) => sl<AuthBloc>(),
@@ -40,6 +43,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           (_) => BlocProvider(
                 create: (_) => sl<AuthBloc>(),
                 child: const SignInView(),
+              ),
+          settings: settings);
+
+    case Dashboard.routeName:
+      return _pageBuilder(
+          (_) => BlocProvider(
+                create: (_) => sl<DashboardBloc>(),
+                child: const Dashboard(),
               ),
           settings: settings);
 

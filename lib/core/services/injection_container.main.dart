@@ -5,6 +5,7 @@ final sl = GetIt.instance;
 Future<void> init() async {
   await _initAuth();
   await _initOnBoarding();
+  await _initDashBoard();
 }
 
 Future<void> _initAuth() async {
@@ -53,4 +54,8 @@ Future<void> _initOnBoarding() async {
     ..registerLazySingleton<OnBoardingLocalDataSource>(
         () => OnBoardingLocalDataSourceImpl(sl()))
     ..registerLazySingleton(() => prefs);
+}
+
+Future<void> _initDashBoard() async {
+  sl.registerFactory(() => DashboardBloc());
 }

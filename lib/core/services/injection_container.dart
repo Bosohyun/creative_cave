@@ -8,6 +8,7 @@ import 'package:creative_cave/src/auth/domain/usecases/sign_in_google.dart';
 import 'package:creative_cave/src/auth/domain/usecases/sign_up.dart';
 import 'package:creative_cave/src/auth/domain/usecases/update_user.dart';
 import 'package:creative_cave/src/auth/presentation/bloc/auth_bloc.dart';
+import 'package:creative_cave/src/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:creative_cave/src/on_boarding/data/datasources/on_boarding_local_data_source.dart';
 import 'package:creative_cave/src/on_boarding/data/repos/on_boarding_repo_impl.dart';
 import 'package:creative_cave/src/on_boarding/domain/repos/on_boarding_repo.dart';

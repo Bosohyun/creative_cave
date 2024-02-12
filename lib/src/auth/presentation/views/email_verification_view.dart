@@ -8,15 +8,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class EmailVerificationScreen extends StatefulWidget {
-  const EmailVerificationScreen({super.key});
+class EmailVerificationView extends StatefulWidget {
+  const EmailVerificationView({super.key});
 
   @override
-  State<EmailVerificationScreen> createState() =>
-      _EmailVerificationScreenState();
+  State<EmailVerificationView> createState() => _EmailVerificationScreenState();
 }
 
-class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
+class _EmailVerificationScreenState extends State<EmailVerificationView> {
   bool isEmailVerified = false;
   Timer? timer;
 
@@ -47,7 +46,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
         //naviage to sign in screen
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed(SignInView.routeName);
+          Navigator.of(context).pop();
         }
       }
     }
