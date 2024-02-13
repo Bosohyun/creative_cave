@@ -51,16 +51,15 @@ class _SignUpViewState extends State<SignUpView> {
             await Future.delayed(const Duration(milliseconds: 500));
 
             if (mounted) {
-              Navigator.push(
+              Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => BlocProvider.value(
-                          value: context.read<AuthBloc>(),
-                          child: const EmailVerificationView())));
+                    builder: (_) => BlocProvider.value(
+                      value: context.read<AuthBloc>(),
+                      child: const EmailVerificationView(),
+                    ),
+                  ));
             }
-          } else if (state is SignedIn) {
-            context.read<UserProvider>().initUser(state.user as LocalUserModel);
-            Navigator.pushReplacementNamed(context, Dashboard.routeName);
           }
         },
         builder: (context, state) {
@@ -110,53 +109,56 @@ class _SignUpViewState extends State<SignUpView> {
                     confirmPasswordController: confirmPasswordController,
                     formKey: formKey),
                 SizedBox(
-                  height: context.height * 0.03,
-                ),
-                Align(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: context.theme.colorScheme.secondary,
-                        foregroundColor: context.theme.colorScheme.tertiary,
-                        minimumSize: Size(
-                          context.width * 0.5,
-                          45,
-                        ),
-                        elevation: 10),
-                    onPressed: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      FirebaseAuth.instance.currentUser?.reload();
-                      if (formKey.currentState!.validate()) {
-                        context.read<AuthBloc>().add(
-                              SignUpEvent(
-                                email: emailController.text.trim(),
-                                password: passwordController.text.trim(),
-                                name: fullNameController.text.trim(),
-                              ),
-                            );
-                      }
-                    },
-                    child: const AutoSizeText(
-                      'Sign Up',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ),
-                ),
-                SizedBox(
                   height: context.height * 0.05,
                 ),
-                GestureDetector(
-                  onTap: () {},
-                  child: SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: Image.asset(
-                      'assets/icons/google.png',
-                    ),
-                  ),
+                Align(
+                  child: (state is AuthLoading)
+                      ? const CircularProgressIndicator()
+                      : (state is EmailVerificationSent)
+                          ? const Icon(
+                              Icons.done,
+                              color: Color.fromARGB(
+                                255,
+                                38,
+                                88,
+                                40,
+                              ),
+                              size: 40,
+                            )
+                          : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      context.theme.colorScheme.secondary,
+                                  foregroundColor:
+                                      context.theme.colorScheme.tertiary,
+                                  minimumSize: Size(
+                                    context.width * 0.5,
+                                    45,
+                                  ),
+                                  elevation: 10),
+                              onPressed: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                FirebaseAuth.instance.currentUser?.reload();
+                                if (formKey.currentState!.validate()) {
+                                  context.read<AuthBloc>().add(
+                                        SignUpEvent(
+                                          email: emailController.text.trim(),
+                                          password:
+                                              passwordController.text.trim(),
+                                          name: fullNameController.text.trim(),
+                                        ),
+                                      );
+                                }
+                              },
+                              child: const AutoSizeText(
+                                'Sign Up',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                            ),
                 ),
                 SizedBox(
                   height: context.height * 0.05,

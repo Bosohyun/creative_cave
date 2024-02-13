@@ -9,7 +9,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           return BlocProvider(
               create: (_) => sl<OnBoardingCubit>(),
               child: const OnBoardingView());
-        } else if (sl<FirebaseAuth>().currentUser != null) {
+        } else if (sl<FirebaseAuth>().currentUser != null &&
+            sl<FirebaseAuth>().currentUser!.emailVerified) {
           final user = sl<FirebaseAuth>().currentUser!;
           final localUser = LocalUserModel(
             uid: user.uid,

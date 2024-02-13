@@ -43,6 +43,7 @@ class _SignInViewState extends State<SignInView> {
           if (state is AuthError) {
             CoreUtils.showSnackBar(context, state.message);
           } else if (state is SignedIn) {
+            await Future.delayed(const Duration(milliseconds: 500));
             if (mounted) {
               context
                   .read<UserProvider>()
@@ -119,36 +120,52 @@ class _SignInViewState extends State<SignInView> {
                   height: context.height * 0.03,
                 ),
                 Align(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: context.theme.colorScheme.secondary,
-                        foregroundColor: context.theme.colorScheme.tertiary,
-                        minimumSize: Size(
-                          context.width * 0.5,
-                          45,
-                        ),
-                        elevation: 10),
-                    onPressed: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      FirebaseAuth.instance.currentUser?.reload();
-                      if (formKey.currentState!.validate()) {
-                        context.read<AuthBloc>().add(
-                              SignInEvent(
-                                email: emailController.text.trim(),
-                                password: passwordController.text.trim(),
+                  child: (state is AuthLoading)
+                      ? const CircularProgressIndicator()
+                      : (state is SignedIn)
+                          ? const Icon(
+                              Icons.done,
+                              color: Color.fromARGB(
+                                255,
+                                38,
+                                88,
+                                40,
                               ),
-                            );
-                      }
-                    },
-                    child: const AutoSizeText(
-                      'Sign In',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ),
+                              size: 40,
+                            )
+                          : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      context.theme.colorScheme.secondary,
+                                  foregroundColor:
+                                      context.theme.colorScheme.tertiary,
+                                  minimumSize: Size(
+                                    context.width * 0.5,
+                                    45,
+                                  ),
+                                  elevation: 10),
+                              onPressed: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                FirebaseAuth.instance.currentUser?.reload();
+                                if (formKey.currentState!.validate()) {
+                                  context.read<AuthBloc>().add(
+                                        SignInEvent(
+                                          email: emailController.text.trim(),
+                                          password:
+                                              passwordController.text.trim(),
+                                        ),
+                                      );
+                                }
+                              },
+                              child: const AutoSizeText(
+                                'Sign In',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                            ),
                 ),
                 SizedBox(
                   height: context.height * 0.05,

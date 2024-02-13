@@ -89,6 +89,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           statusCode: 'Unknown Error',
         );
       }
+
+      if (!user.emailVerified) {
+        throw const ServerException(
+          message: 'Email not verified',
+          statusCode: '401',
+        );
+      }
+
       var userData = await _getUserData(user.uid);
 
       if (userData.exists) {

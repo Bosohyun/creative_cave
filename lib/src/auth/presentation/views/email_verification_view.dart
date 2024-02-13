@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:creative_cave/core/common/app/theme/app_theme.dart';
 import 'package:creative_cave/core/extensions/context_extension.dart';
 import 'package:creative_cave/core/utils/core_utils.dart';
 import 'package:creative_cave/src/auth/presentation/bloc/auth_bloc.dart';
-import 'package:creative_cave/src/auth/presentation/views/sign_in_view.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,7 +48,14 @@ class _EmailVerificationScreenState extends State<EmailVerificationView> {
 
         //naviage to sign in screen
         if (mounted) {
-          Navigator.of(context).pop();
+          final navigator = Navigator.of(context);
+
+          await FirebaseAuth.instance.signOut();
+
+          unawaited(navigator.pushNamedAndRemoveUntil(
+            '/',
+            (route) => false,
+          ));
         }
       }
     }
@@ -65,33 +74,51 @@ class _EmailVerificationScreenState extends State<EmailVerificationView> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       return Scaffold(
         backgroundColor: context.theme.colorScheme.background,
-        appBar: AppBar(
-          title: const Text('Email Verification'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Verify your email to continue',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: context.theme.colorScheme.onPrimary,
+        body: Container(
+          decoration:
+              const BoxDecoration(gradient: AppTheme.signInBackgroundGradient),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Verify your email to continue',
+                  style: context.theme.textTheme.displayLarge
+                      ?.copyWith(color: context.theme.colorScheme.primary),
                 ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: context.theme.colorScheme.primary,
-                    foregroundColor: Colors.white),
-                onPressed: () {
-                  //Navagate to sign in screen
-                  Navigator.of(context)
-                      .pushReplacementNamed(SignInView.routeName);
-                },
-                child: const Text('Back to Sign In'),
-              ),
-            ],
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: context.theme.colorScheme.secondary,
+                      foregroundColor: context.theme.colorScheme.tertiary,
+                      minimumSize: Size(
+                        context.width * 0.5,
+                        45,
+                      ),
+                      elevation: 10),
+                  onPressed: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    FirebaseAuth.instance.currentUser?.reload();
+                    if (FirebaseAuth.instance.currentUser!.emailVerified) {
+                      final navigator = Navigator.of(context);
+
+                      unawaited(navigator.pushNamedAndRemoveUntil(
+                        '/',
+                        (route) => false,
+                      ));
+                    }
+                  },
+                  child: AutoSizeText(
+                    'Back to Sign In',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.bold,
+                        color: context.theme.colorScheme.primary),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
